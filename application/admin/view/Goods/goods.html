@@ -59,7 +59,7 @@ td a{
      </div>
      <table class="table table-striped table-hover table-bordered dataTable" id="editable-sample" aria-describedby="editable-sample_info"> 
       <thead> 
-       <tr role="row">
+       <tr role="row" style = 'text-align: center;'>
         <th class="sorting" role="columnheader">系统ID</th>
         <th class="sorting" role="columnheader" style = 'width:220px'>商品图</th>
         <th class="sorting" role="columnheader">商品名称</th>
@@ -94,6 +94,7 @@ td a{
         </td> 
         <td>
           <a  href="/{$tables}/{$tables}add/id/{$rows['id']}"  class = 'btn btn-success btn-sm'>编辑</a>
+          <a class="btn btn-info btn-sm " href="/{$tables}/productinfoadd/id/{$rows['id']}/">编辑标签</a>
           <a href="javascript:;" class = 'btn btn-warning btn-sm click_delete' thisID="{$rows['id']}" clickRes = '/{$tables}/Click_delete' clickTable = '{$table}'>删除</a>
         </td> 
        </tr>

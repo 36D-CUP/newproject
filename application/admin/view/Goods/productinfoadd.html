@@ -1,0 +1,252 @@
+{extend name='IndexPublic:index'}
+{block name='body'}
+<style>
+td a{
+  color:#fff !important;
+}
+</style>
+<!-- 百度编辑器 -->
+<script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+<!-- 百度編輯器END -->
+
+<link href="/static/admin/css/fileinput.min.css" rel="stylesheet"><!-- 上传 -->
+<script src="/static/admin/js/fileinput.min.js"></script><!-- 上传 -->
+<!-- 头部开始 start-->
+<div class="page-heading">
+    <h3>
+        {$title}
+    </h3>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#">{$title}</a>
+        </li>
+        <li class="active">{$title_txt}</li>
+    </ul>
+
+</div>
+<!-- 头部结束 end-->
+<div class="wrapper" style = 'background: #fff'>
+    <div class="panel-body">
+    <h2>如无任何所属系列,请先添加</h2>
+      <hr>
+        <form class="form-horizontal adminex-form" id = 'admin_form' method="post" action = ''  enctype="multipart/form-data" autocomplete="off">
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label "><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">添加所属系列</font></font></label>
+                <div class="col-sm-4">
+                    <input type="text"  name = 'name' class="form-control tooltips myupdata"  data-trigger="hover" data-toggle="tooltip" title="" placeholder="添加所属系列" verName='true' data-original-title="添加所属系列" value = "{$row['name']}" >
+                </div>
+                <div class = 'col-sm-2'>
+                    <button class = 'btn btn-success' type = 'button' id = 'add_btn' thisId = '{$ids}'>添加</button>
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label "><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">删除所属系列</font></font></label>
+                <div class="col-sm-10">
+                    {volist name="row" id="vo"}
+                      <div style = 'padding:0px 5px;height:35px;line-height:35px;border-radius:5px;margin:0 5px;background: #ccc;float:left'>
+                         <i style = 'float:left;display: block'>{$vo.name}</i>
+                         <span style = 'float:left;display: block;margin-left:10px;cursor:pointer' class = 'del_info' thisId = '{$vo.id}'>×</span>
+                      </div>
+                    {/volist}
+                </div>
+
+            </div>
+        <hr>
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">所属型号</font></font></label>
+                <div class="col-sm-10" id = 'select'>
+                  <select  id = 'info_name' name="info_name" style = 'height:34px;border-radius:5px;border:1px solid #ccc ' >
+                    {volist name="row" id="vo"}
+                      <option value="{$vo.id}" class = 'sel'  {if condition= "$vo['id'] eq $sel"}selected = "selected"{/if}>{$vo.name}</option> 
+
+                    {/volist}
+                  </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">原有标签</font></label>
+                <div class="col-sm-10 " id = 'che_box'>
+                    {volist name="rowc" id="vo"}
+                      <label for="">
+                      <input  type="checkbox" name="info_name_c[]" title="" value="{$vo['id']}" checked style = 'margin-top:10px;'>   {$vo['name']}
+                      </label>
+                    {/volist}
+                </div>
+            </div>
+            <!-- 添加新标签 -->
+            <div id = 'add_newinfo'>
+              <div class="form-group">
+                  <label class="col-sm-2 col-sm-2 control-label "><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">新标签</font></font></label>
+                  <div class="col-sm-10">
+                      <input type="text"  name = 'name' class="form-control tooltips myupdata"  data-trigger="hover" data-toggle="tooltip" title="" placeholder="请输入新标签" verName='true' data-original-title="请输入新标签" value = "" >
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-2 col-sm-2 control-label "><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">追加金额</font></font></label>
+                  <div class="col-sm-10">
+                      <input type="text"  name = 'append' class="form-control tooltips myupdata"  data-trigger="hover" data-toggle="tooltip" title="" placeholder="请输入追加金额" verName='true' data-original-title="请输入追加金额" value = "0" >
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">排序</font></label>
+                  <div class="col-sm-10">
+                      <label style = 'margin :0 5px;'>
+                        <input type="radio" name = 'sort' value = '1'   checked style = 'margin-right:5px;vertical-align:middle;margin-top:10px;'>
+                        <div style = 'float:right;margin-top:6px;' >正常</div>
+
+                      </label>
+                      <label style = 'margin :0 5px;'>
+                        <input type="radio" name = 'sort' value = '2'  style = 'margin-right:5px;vertical-align:middle;margin-top:10px;'>
+                        <div style = 'float:right;margin-top:6px;' >上升</div>
+                      </label>
+                  </div>
+              </div>
+             
+              <div class="form-group">
+                  <label class="col-sm-2 col-sm-2 control-label"></label>
+                  <div class="col-sm-10">
+                      <button class = 'btn btn-success' type = 'button' id = 'valiSub'>提交</button>
+                  </div>
+              </div>
+
+            </div>
+            <!-- 添加新标签 -->
+
+        </form>
+    </div>
+
+</div>
+<script>
+var ue = UE.getEditor('editor', {
+
+    autoHeightEnabled: true,
+    autoFloatEnabled: true
+});
+    $("#file-0a").fileinput({
+        allowedFileExtensions : ['jpg', 'png','gif'],
+        overwriteInitial: false,
+        showUpload:false,
+        maxFileSize: 5000,
+        showUpload:false, 
+        browseClass:"btn btn-success",
+        maxFilesNum: 1,
+        
+        //allowedFileTypes: ['image', 'video', 'flash'],
+        slugCallback: function(filename) {
+            return filename.replace('(', '_').replace(']', '_');
+        }
+    });
+// $('#valiSub').click(function(event) {
+// 　　//formdata储存异步上传数据
+//      var formData = new FormData($('form')[0]);
+//      formData.append('imgs',$('#file-0a')[0].files);
+//      formData.append('content',ue.getContent());
+     
+//      var myupdata = $(this).parents('form').find('.myupdata');
+//      for(var i = 0 ; i<myupdata.length ; i++){
+//         formData.append(myupdata.eq(i).attr('name'),myupdata.eq(i).val());
+//      }
+
+//      //坑点: 无论怎么传数据,console.log(formData)都会显示为空,但其实值是存在的,f12查看Net tab可以看到数据被上传了
+//      $.ajax({
+//       url:'/{$tables}/{$tables}doadd',
+//       type: 'POST',
+//       data: formData,
+//       //这两个设置项必填
+//       contentType: false,
+//       processData: false,
+//       success:function(data){
+//         alert(data);
+//         if(data == '添加成功'){
+//             if(confirm('是否继续添加?')){
+//                 location.reload();
+//             }else{
+//                 window.location.href = '/{$tables}/{$tables}';
+//             }
+//         }else{
+//             window.location.href = '/{$tables}/{$tables}';
+//         }
+//       }
+//      })
+//  });
+$('#valiSub').click(function(){
+  var inp = $(this).parents('#add_newinfo').find('input');
+  var name = inp.eq(0).val();
+  var append = inp.eq(1).val();
+  if (inp.eq(2).attr('checked') == 'checked'){
+    var sort = inp.eq(2).val();
+  }else{
+    var sort = inp.eq(3).val();
+  }
+  var xh = $('#select').find('select').val();
+  var bq = $('#che_box').find('input:checked');
+  var bqs = new Array();
+  for(var i = 0 ;i<bq.length ; i++){
+    bqs[i] = bq.eq(i).val();
+  }
+  // console.log(bq.length);return;
+  $.post('/goods/infosadd',{name:name,append:append,sort:sort,val:xh,bqs:bqs},function(data){
+        alert('添加成功');
+        location.reload();
+  });
+});
+
+
+
+$('#add_btn').click(function(){
+  var name = $(this).parents('.form-group').find('input').val();
+
+  if(name.length==""){
+    alert('请输入值');
+  }else{
+    $.post("/goods/infodoadd",{name:name,id:$(this).attr('thisId')},function(data){
+      if(data == 1){
+        alert('添加成功');
+        location.reload();
+      }else{
+        alert('添加失败');
+        location.reload();
+      }
+    });
+  }
+});
+  $('.del_info').click(function(){
+  var id = $(this).attr('thisId');
+    $.post("/goods/infododel",{name:name,id:$(this).attr('thisId')},function(data){
+      if(data == 1){
+        alert('删除成功');
+        location.reload();
+      }else{
+        alert('删除失败');
+        location.reload();
+      }
+    });
+
+});
+
+  $('#info_name').change(function(){
+    var val = $(this).val();
+
+          $.post("/goods/info_name",{id:val},function(data){
+            var str = '';
+            for(var i = 0 ; i<data.length ; i++){
+              str += '<input  type="checkbox" name="info_name_c[]" value = "'+data[i].id+'" checked >'+data[i].name;
+            }
+            if(str == ""){
+              $('#che_box').html('无任何2级规格');
+            }else{
+              $('#che_box').html(str);
+            }
+            // console.log(data[0].iid);
+            var form = layui.form;
+            form.render();
+
+          },'json');
+
+  });
+</script>
+{/block}

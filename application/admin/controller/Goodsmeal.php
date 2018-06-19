@@ -23,12 +23,12 @@ Class Goodsmeal extends Allow
 		$table = 'n_goods_meal';
 		switch($s_type){
 			case 1:
-				$num  = Db::table($table)->where($s_ty,'like',"%".$s_val."%")->count();							//数量
-				$data = Db::table($table)->where($s_ty,'like',"%".$s_val."%")->limit($str)->select();			//获取所有数据
+				$num  = Db::table($table)->where('aid',$this->aid)->where($s_ty,'like',"%".$s_val."%")->count();							//数量
+				$data = Db::table($table)->where('aid',$this->aid)->where($s_ty,'like',"%".$s_val."%")->limit($str)->select();			//获取所有数据
 			break;
 			default:
-				$num  = Db::table($table)->count();												//数量
-				$data = Db::table($table)->limit($str)->select();								//获取所有数据
+				$num  = Db::table($table)->where('aid',$this->aid)->count();												//数量
+				$data = Db::table($table)->where('aid',$this->aid)->limit($str)->select();								//获取所有数据
 			break;
 		}
 
@@ -90,7 +90,7 @@ Class Goodsmeal extends Allow
 		$data['introduce'] 			 = input('introduce');		//介绍
 		$data['details']  			 = input('content');		//详情
 		$data['sort']  				 = input('sort');			//排序
-		$data['aid']  				 = $aid;					//管理员id
+		$data['aid']  				 = $this->aid;					//管理员id
 
 		if(!empty(input('discountprice'))){
 			$data['discountprice']  =input('discountprice');    //优惠价

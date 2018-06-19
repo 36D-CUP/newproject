@@ -23,12 +23,12 @@ Class Goods extends Allow
 		$table = 'n_goods';
 		switch($s_type){
 			case 1:
-				$num  = Db::table($table)->where($s_ty,'like',"%".$s_val."%")->count();							//数量
-				$data = Db::table($table)->where($s_ty,'like',"%".$s_val."%")->limit($str)->select();			//获取所有数据
+				$num  = Db::table($table)->where($s_ty,'like',"%".$s_val."%")->where('aid',$this->aid)->count();							//数量
+				$data = Db::table($table)->where($s_ty,'like',"%".$s_val."%")->where('aid',$this->aid)->limit($str)->select();			//获取所有数据
 			break;
 			default:
-				$num  = Db::table($table)->count();												//数量
-				$data = Db::table($table)->limit($str)->select();								//获取所有数据
+				$num  = Db::table($table)->where('aid',$this->aid)->count();												//数量
+				$data = Db::table($table)->where('aid',$this->aid)->limit($str)->select();								//获取所有数据
 			break;
 		}
 
@@ -42,7 +42,7 @@ Class Goods extends Allow
 				}
 			}
 			//组合类别
-			$data[$i]['mid'] = Db::table('n_goods_meal')->where('id',$data[$i]['mid'])->find()['name'];
+			$data[$i]['mid'] = Db::table('n_goods_meal')->where('aid',$this->aid)->where('id',$data[$i]['mid'])->find()['name'];
 		}
 
 		//分页
@@ -66,6 +66,8 @@ Class Goods extends Allow
 	{
 		$id = input('id');
 
+		$meal = Db::table('n_goods_meal')->select();
+
 		//判定是否添加
 		$table = 'n_goods';
 		if(empty($id)){
@@ -74,6 +76,7 @@ Class Goods extends Allow
 		}else{
 			$arr['title_txt']  = '管理员修改';
 			$arr['row']        = Db::table($table)->where('id',$id)->find();		//找出用户
+			$arr['row']['meal']= Db::table('n_goods_meal')->where('aid',$this->aid)->where('id',$arr['row']['mid'])->find()['id'];
 
 			$old_img['img_surface_name'] = $table;										//组合图片条件
 			$old_img['img_surface_id']   = $id;
@@ -86,10 +89,12 @@ Class Goods extends Allow
 				}
 			}
 		}
+		$arr['meal']	   = $meal;								//类别
+
 		$arr['table']      = 'n_goods';																	//模板上使用
 		$arr['tables']     = 'goods';																		//模板上使用
 		$arr['title']	   = '管理员管理';
-		return $this->fetch('goods/goodsadd',$arr);
+		return $this->fetch('Goods/goodsadd',$arr);
 	}
 
 
@@ -102,8 +107,8 @@ Class Goods extends Allow
 		$data['introduce'] 			 = input('introduce');		//介绍
 		$data['details']  			 = input('content');		//详情
 		$data['sort']  				 = input('sort');			//排序
-		$data['aid']  				 = $aid;					//管理员id
-
+		$data['mid']  				 = input('meal');			//排序
+		$data['aid']  				 = $this->aid;					//管理员id
 		if(!empty(input('discountprice'))){
 			$data['discountprice']  =input('discountprice');    //优惠价
 		}
@@ -127,6 +132,93 @@ Class Goods extends Allow
 		echo $id==""?'添加成功':'修改成功';
 	}
 
+	//规格添加页
+	public function getProductinfoadd()
+	{
+        $id = input('id');
+        $infos = Db::table('n_goods_info')->where('gid='.$id)->select();
+
+        if(!empty($infos)){
+
+            $infoc = Db::table('n_goods_info_c')->where('iid='.$infos[0]['id'])->select();
+        }
+
+
+		$arr['ids']	   = $id;
+		$arr['sel']	   = $infos[0]['id'];
+		$arr['row']	   = $infos;
+		$arr['rowc']	   = $infoc;
+		$arr['title']	   = '商品管理';
+		$arr['title_txt']  = '商品类别添加';
+		return $this->fetch('Goods/productinfoadd',$arr);
+	}
+	//删除系列
+	public function postInfododel()
+	{        
+		$id = input('id');
+
+        $bool = Db::table('n_goods_info')->where('id='.$id)->delete();
+        if ($bool) {
+            echo "1";
+        }
+    }
+
+	//添加2级规格
+	public function postInfosadd()
+	{        
+        $val  = input('val');
+        $name 		= input('name');
+        $sort 		= input('sort');
+        $append 	= input('append');
+        $bqs 	= input()['bqs'];
+
+
+        $product_info = Db::table('n_goods_info_c')->where('iid='.$val)->select();
+
+        foreach($product_info as $v){
+            if(!in_array($v['id'],$bqs)){
+                $bool = Db::table('n_goods_info_c')->where('id='.$v['id'])->delete();
+                if(!$bool){
+                    $no_off = 2;
+                }
+            }
+        }
+
+        if(!empty($name)){
+            $info_c['sort'] = $sort;
+            $info_c['append'] = $append;
+            $info_c['name'] = $name;
+            $info_c['iid'] = $val;
+            $bool =Db::table('n_goods_info_c')->insert($info_c);
+            if(!$bool){
+                $no_off = 2;
+            }
+
+        }
+        if($no_off==1){
+           echo "1";
+        }
+    }
+
+	//添加系列
+	public function postInfodoadd()
+	{        
+        $data['gid'] = input('id');
+        $data['name'] = input('name');
+        $data['aid'] = $this->aid;
+        $bool = Db::table('n_goods_info')->insert($data);
+        if ($bool) {
+            echo "1";
+        }
+    }
+
+
+	//追加2级系列
+	public function postInfo_name(){
+		 $id = input('id');
+        $row = Db::table('n_goods_info_c')->where('iid='.$id)->select();
+        echo json_encode($row);
+	}
 
 	//单击修改状态
 	public function postClick_updata_status()
