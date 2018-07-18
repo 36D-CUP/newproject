@@ -1,0 +1,130 @@
+{extend name='IndexPublic:index'}
+{block name='body'}
+<style>
+td a{
+  color:#fff !important;
+}
+</style>
+
+
+<link href="/static/admin/css/fileinput.min.css" rel="stylesheet"><!-- 上传 -->
+<script src="/static/admin/js/fileinput.min.js"></script><!-- 上传 -->
+<!-- 头部开始 start-->
+<div class="page-heading">
+    <h3>
+        {$title}
+    </h3>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#">{$title}</a>
+        </li>
+        <li class="active">{$title_txt}</li>
+    </ul>
+
+</div>
+<!-- 头部结束 end-->
+<div class="wrapper" style = 'background: #fff'>
+    <div class="panel-body">
+        <form class="form-horizontal adminex-form" id = 'admin_form' method="post" action = ''  enctype="multipart/form-data" autocomplete="off">
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">图片上传</font></font></label>
+                <div class="col-sm-10">
+                    {if condition="($row['img'])"}<img style = 'width:200px;margin:10px' src = "{$row['img']}">{/if}
+                    <input name = 'imgs[]' id="file-0a" type="file" class="file" data-overwrite-initial="false" ><!-- multiple  -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label "><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理员账号</font></font></label>
+                <div class="col-sm-10">
+                    <input type="text"  name = 'admin_user' class="form-control tooltips myupdata"  data-trigger="hover" data-toggle="tooltip" title="" placeholder="请输入账号" verName='true' data-original-title="请输入账号" value = "{$row['admin_user']}" >
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理员密码</font></font></label>
+                <div class="col-sm-10">
+                    <input type="text" name= 'admin_pass' class="form-control tooltips myupdata"  placeholder="请输入密码" data-original-title="请输入昵称" value = "">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">昵称</font></label>
+                <div class="col-sm-10">
+                    <input type="text" name = 'admin_name'  notNull ='true' class="form-control tooltips myupdata" data-trigger="hover" data-toggle="tooltip" title="" placeholder="请输入昵称" data-original-title="请输入昵称" value = "{$row['admin_name']}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">等级</font></font></label>
+                <div class="col-sm-10">
+                    <select id = 'gid' name="level" class = 'myupdata' style = 'height:34px;border-radius:5px;border:1px solid #ccc '>
+                      <option value="1" {if condition="($row['level']==1)"}selected{/if}>--A级管理员--</option>
+                      <option value="2" {if condition="($row['level']==2)"}selected{/if}>--B级管理员--</option>
+                      <option value="3" {if condition="($row['level']==3)"}selected{/if}>--C级管理员--</option>
+                    </select>
+                </div>
+            </div>
+            
+
+            <input type="hidden" class = 'myupdata' name = 'id' value="{$row['id']}">
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"></label>
+                <div class="col-sm-10">
+                    <button class = 'btn btn-success' type = 'button' id = 'valiSub' onclick= ''>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script>
+    $("#file-0a").fileinput({
+        allowedFileExtensions : ['jpg', 'png','gif'],
+        overwriteInitial: false,
+        showUpload:false,
+        maxFileSize: 5000,
+        showUpload:false, 
+        browseClass:"btn btn-success",
+        maxFilesNum: 1,
+        
+        //allowedFileTypes: ['image', 'video', 'flash'],
+        slugCallback: function(filename) {
+            return filename.replace('(', '_').replace(']', '_');
+        }
+    });
+$('#valiSub').click(function(event) {
+　　//formdata储存异步上传数据
+     var formData = new FormData($('form')[0]);
+     formData.append('imgs',$('#file-0a')[0].files);
+     var myupdata = $(this).parents('form').find('.myupdata');
+     for(var i = 0 ; i<myupdata.length ; i++){
+        formData.append(myupdata.eq(i).attr('name'),myupdata.eq(i).val());
+     }
+
+     //坑点: 无论怎么传数据,console.log(formData)都会显示为空,但其实值是存在的,f12查看Net tab可以看到数据被上传了
+     $.ajax({
+      url:'/{$tables}/{$tables}doadd',
+      type: 'POST',
+      data: formData,
+      //这两个设置项必填
+      contentType: false,
+      processData: false,
+      success:function(data){
+        alert(data);
+        if(data == '添加成功'){
+            if(confirm('是否继续添加?')){
+                location.reload();
+            }else{
+                window.location.href = '/{$tables}/{$tables}';
+            }
+        }else{
+            window.location.href = '/{$tables}/{$tables}';
+        }
+      }
+     })
+ });
+    
+</script>
+{/block}

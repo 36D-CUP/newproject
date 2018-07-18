@@ -1,0 +1,166 @@
+{extend name='IndexPublic:index'}
+{block name='body'}
+<style>
+td a{
+  color:#fff !important;
+}
+</style>
+<!-- 百度编辑器 -->
+<script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+<!-- 百度編輯器END -->
+
+<link href="/static/admin/css/fileinput.min.css" rel="stylesheet"><!-- 上传 -->
+<script src="/static/admin/js/fileinput.min.js"></script><!-- 上传 -->
+<!-- 头部开始 start-->
+<div class="page-heading">
+    <h3>
+        {$title}
+    </h3>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#">{$title}</a>
+        </li>
+        <li class="active">{$title_txt}</li>
+    </ul>
+
+</div>
+<!-- 头部结束 end-->
+<div class="wrapper" style = 'background: #fff'>
+    <div class="panel-body">
+        <form class="form-horizontal adminex-form" id = 'admin_form' method="post" action = ''  enctype="multipart/form-data" autocomplete="off">
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">图片上传</font></font></label>
+                <div class="col-sm-10">
+                  <div style ='width: 100%;' class = 'col-sm-10'>
+                      {if condition="($row['img'])"}
+                       {volist name='$row.img' id='imgs' key='k'}
+                          <div  style = 'width:200px;margin:10px;padding:0;float:left;'>
+                            <img style = 'width:200px;' src = "{$imgs}">
+                            <div class = 'thisImgdel' style = 'width: 100%;background-color: #444;height:35px;margin-bottom: 0;color:#fff;line-height: 35px;text-align:center;cursor:pointer' myimgid ="{$row['id']}" myimgurl="{$row['imgpath'][$k-1]}" myimgname = '{$table}' clickRes = '/{$tables}/thisImgdel'>删除</div>
+                          </div>
+                        {/volist}
+                      {/if}
+                    </div>
+                    <input name = 'imgs[]' id="file-0a" type="file" class="file" data-overwrite-initial="false" multiple ><!-- multiple  -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label "><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">产品名称</font></font></label>
+                <div class="col-sm-10">
+                    <input type="text"  name = 'name' class="form-control tooltips myupdata"  data-trigger="hover" data-toggle="tooltip" title="" placeholder="请输入产品名称" verName='true' data-original-title="请输入产品名称" value = "{$row['name']}" >
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">产品单价</font></font></label>
+                <div class="col-sm-10">
+                    <input type="text" name= 'price' class="form-control tooltips myupdata"  placeholder="请输入产品单价,例如9.00" data-original-title="请输入产品单价,例如9.00" value = "{$row['price']}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">优惠价(无则为空)</font></label>
+                <div class="col-sm-10">
+                    <input type="text" name = 'discountprice'  notNull ='true' class="form-control tooltips myupdata" data-trigger="hover" data-toggle="tooltip" title="" placeholder="请输入优惠价(无则为空)" data-original-title="请输入优惠价(无则为空)" value = "{$row['discountprice']}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">排序</font></label>
+                <div class="col-sm-10">
+                    <label style = 'margin :0 5px;'>
+                      <input type="radio" name = 'sort' value = '1'  {if condition="($row['sort']==1)"}checked{/if}  style = 'margin-right:5px;vertical-align:middle;margin-top:10px;'>
+                      <div style = 'float:right;margin-top:6px;' >正常</div>
+
+                    </label>
+                    <label style = 'margin :0 5px;'>
+                      <input type="radio" name = 'sort' value = '2'  {if condition="($row['sort']==2)"}checked{/if} style = 'margin-right:5px;vertical-align:middle;margin-top:10px;'>
+                      <div style = 'float:right;margin-top:6px;' >上升</div>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">商品介绍</font></label>
+                <div class="col-sm-10">
+                    <textarea name="introduce" class = 'myupdata' id="" placeholder="请输入介绍(不得超过255字)" data-original-title="请输入介绍(不得超过255字)" cols="100" rows="10">{$row['introduce']}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="dtp_input1" class="col-md-2 control-label">发布内容</label>
+                <div class="input-group   col-md-5" >
+                    <script id="editor" type="text/plain" style="width:1024px;height:500px;margin-left: 15px;">{$row['details']}</script><br><br>
+                </div>
+            </div>
+            
+
+            <input type="hidden" class = 'myupdata' name = 'id' value="{$row['id']}">
+
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label"></label>
+                <div class="col-sm-10">
+                    <button class = 'btn btn-success' type = 'button' id = 'valiSub' onclick= ''>提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script>
+var ue = UE.getEditor('editor', {
+
+    autoHeightEnabled: true,
+    autoFloatEnabled: true
+});
+    $("#file-0a").fileinput({
+        allowedFileExtensions : ['jpg', 'png','gif'],
+        overwriteInitial: false,
+        showUpload:false,
+        maxFileSize: 5000,
+        showUpload:false, 
+        browseClass:"btn btn-success",
+        maxFilesNum: 1,
+        
+        //allowedFileTypes: ['image', 'video', 'flash'],
+        slugCallback: function(filename) {
+            return filename.replace('(', '_').replace(']', '_');
+        }
+    });
+$('#valiSub').click(function(event) {
+　　//formdata储存异步上传数据
+     var formData = new FormData($('form')[0]);
+     formData.append('imgs',$('#file-0a')[0].files);
+     formData.append('content',ue.getContent());
+     
+     var myupdata = $(this).parents('form').find('.myupdata');
+     for(var i = 0 ; i<myupdata.length ; i++){
+        formData.append(myupdata.eq(i).attr('name'),myupdata.eq(i).val());
+     }
+
+     //坑点: 无论怎么传数据,console.log(formData)都会显示为空,但其实值是存在的,f12查看Net tab可以看到数据被上传了
+     $.ajax({
+      url:'/{$tables}/{$tables}doadd',
+      type: 'POST',
+      data: formData,
+      //这两个设置项必填
+      contentType: false,
+      processData: false,
+      success:function(data){
+        alert(data);
+        if(data == '添加成功'){
+            if(confirm('是否继续添加?')){
+                location.reload();
+            }else{
+                window.location.href = '/{$tables}/{$tables}';
+            }
+        }else{
+            window.location.href = '/{$tables}/{$tables}';
+        }
+      }
+     })
+ });
+    
+</script>
+{/block}
